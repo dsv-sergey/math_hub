@@ -3,144 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Математический Хаб</title>
+    <title>Vanya Math Hub</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f0f4f8; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; margin: 0; }
-        .container { background: #fff; padding: 30px 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 600px; width: 100%; text-align: center; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f0f4f8; display: flex; flex-direction: column; align-items: center; padding: 20px 10px; margin: 0; }
+        .container { background: #fff; padding: 25px 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 650px; width: 100%; text-align: center; box-sizing: border-box; }
         
         /* Табло очков */
-        .score-board { font-size: 20px; font-weight: bold; color: #2c3e50; margin-bottom: 25px; display: flex; justify-content: space-between; background: #fdf2e9; border: 2px solid #f39c12; padding: 15px; border-radius: 12px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
-        .total-xp { color: #8e44ad; font-size: 24px; }
-        .streak { color: #e67e22; font-size: 20px; animation: pulse 1s infinite; display: none; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .score-board { font-size: 18px; font-weight: bold; color: #2c3e50; margin-bottom: 20px; display: flex; justify-content: space-between; background: #fdf2e9; border: 2px solid #f39c12; padding: 12px 15px; border-radius: 12px; }
+        .total-xp { color: #8e44ad; font-size: 22px; }
+        .streak { color: #e67e22; font-size: 18px; display: none; }
 
         /* Навигация (Табы) */
-        .tabs { display: flex; gap: 10px; justify-content: center; margin-bottom: 30px; background: #ecf0f1; padding: 5px; border-radius: 10px; }
-        .tab-btn { flex: 1; background: transparent; color: #7f8c8d; border: none; padding: 12px 20px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        .tabs { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 25px; background: #ecf0f1; padding: 8px; border-radius: 10px; }
+        .tab-btn { flex: 1 1 22%; min-width: 100px; background: transparent; color: #7f8c8d; border: none; padding: 10px 5px; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; }
         .tab-btn:hover { background: #dfe6e9; }
-        .tab-btn.active { background: #fff; color: #2c3e50; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .tab-btn.active { background: #fff; color: #2ecc71; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
 
         /* Общие стили секций */
         .module { display: none; }
         .module.active { display: block; animation: fadeIn 0.4s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        h2 { color: #7f8c8d; font-size: 18px; text-transform: uppercase; margin-bottom: 20px; }
-        .btn-check { background-color: #2ecc71; color: white; border: none; padding: 12px 35px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.2s; margin-top: 15px; width: 100%; max-width: 250px; }
-        .btn-check:hover { background-color: #27ae60; transform: translateY(-2px); }
-        .btn-retry { background-color: #3498db; width: 100%; margin-top: 15px; }
+        h2 { color: #34495e; font-size: 20px; text-transform: uppercase; margin-bottom: 15px; }
+        input[type="text"] { font-size: 18px; padding: 10px; border: 2px solid #bdc3c7; border-radius: 8px; outline: none; text-align: center; }
+        input[type="text"]:focus { border-color: #3498db; }
+        
+        button { background-color: #2ecc71; color: white; border: none; padding: 10px 25px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+        button:hover { background-color: #27ae60; transform: translateY(-2px); }
+        .btn-retry { background-color: #3498db; width: 100%; }
         .btn-retry:hover { background-color: #2980b9; }
 
-        .feedback { margin-top: 25px; font-size: 18px; text-align: left; padding: 15px; border-radius: 8px; background-color: #f8f9fa; display: none; }
-        .step { color: #34495e; margin-bottom: 8px; font-family: monospace; font-size: 18px; }
-        .correct { color: #27ae60; font-weight: bold; text-align: center; font-size: 22px; }
-        .incorrect { color: #e74c3c; font-weight: bold; text-align: center; margin-bottom: 15px; }
+        .feedback { margin-top: 20px; font-size: 16px; text-align: left; padding: 15px; border-radius: 8px; background-color: #f8f9fa; display: none; line-height: 1.5; }
+        .step { color: #34495e; margin-bottom: 5px; font-family: monospace; font-size: 16px; }
+        .correct { color: #27ae60; font-weight: bold; text-align: center; font-size: 20px; }
+        .incorrect { color: #e74c3c; font-weight: bold; text-align: center; margin-bottom: 10px; }
 
-        /* Специфично для Уравнений */
-        .eq-display { font-size: 32px; font-weight: bold; margin: 30px 0; color: #2c3e50; }
-        .eq-input-group { margin-bottom: 20px; font-size: 24px; font-weight: bold; }
-        #answerEq { font-size: 22px; padding: 10px; width: 120px; text-align: center; border: 2px solid #bdc3c7; border-radius: 8px; outline: none; }
-        #answerEq:focus { border-color: #3498db; }
+        /* Специфично для Уравнений (База) */
+        .eq-display { font-size: 28px; font-weight: bold; margin: 20px 0; color: #2c3e50; letter-spacing: 1px; }
 
         /* Специфично для Дробей */
-        .frac-container { display: flex; align-items: center; justify-content: center; gap: 15px; margin: 30px 0; font-size: 28px; font-weight: bold; color: #2c3e50; }
-        .fraction { display: flex; flex-direction: column; align-items: center; }
-        .fraction .num { padding: 5px 10px; border-bottom: 3px solid #34495e; min-width: 20px; text-align: center; }
-        .fraction .den { padding: 5px 10px; min-width: 20px; text-align: center; }
-        .operator { padding: 0 10px; }
-        .input-fraction input { font-size: 22px; width: 60px; text-align: center; border: 2px solid #bdc3c7; border-radius: 6px; outline: none; margin: 5px 0; font-weight: bold; }
-        .input-fraction input:focus { border-color: #3498db; }
-        .input-fraction .num-input { border-bottom: none; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+        .frac-container, .eq-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 20px 0; font-size: 24px; font-weight: bold; color: #2c3e50; }
+        .fraction, .frac { display: flex; flex-direction: column; align-items: center; }
+        .fraction .num, .frac .num { padding: 5px 10px; border-bottom: 3px solid #34495e; min-width: 20px; text-align: center; }
+        .fraction .den, .frac .den { padding: 5px 10px; min-width: 20px; text-align: center; }
+        .input-fraction input { width: 50px; margin: 3px 0; }
         .input-fraction .divider { height: 3px; background-color: #34495e; width: 100%; }
-        .input-fraction .den-input { border-top: none; border-top-left-radius: 0; border-top-right-radius: 0; }
-        .note { font-size: 14px; color: #7f8c8d; margin-top: 10px; text-align: center; }
+
+        /* Специфично для ПРО */
+        .step-box { background: #fff9db; border: 2px dashed #f1c40f; padding: 15px; border-radius: 10px; margin: 15px 0; text-align: left; font-size: 16px; }
+        .full-input { width: 90%; margin-top: 10px; text-align: left; padding-left: 10px; }
+        .err { background: #ffe3e3; color: #d63031; border-left: 5px solid #d63031; }
+        .ok { background: #e3fcef; color: #27ae60; border-left: 5px solid #27ae60; }
+
+        /* Справочник */
+        .theory-box { text-align: left; background: #fdfefe; border-left: 4px solid #3498db; padding: 15px; margin-bottom: 15px; border-radius: 0 8px 8px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .theory-box h4 { margin: 0 0 10px 0; color: #2980b9; }
+        .theory-box p { margin: 0; font-size: 15px; color: #34495e; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="score-board">
             <span>Общий XP: <span id="globalScore" class="total-xp">0</span></span>
-            <span id="streakDisplay" class="streak">🔥 Серия: <span id="streakVal">0</span> (x<span id="multiplierVal">1</span>)</span>
+            <span id="streakDisplay" class="streak">🔥 Серия: <span id="streakVal">0</span></span>
         </div>
 
         <div class="tabs">
-            <button id="tabEqBtn" class="tab-btn active" onclick="switchTab('eq')">Уравнения</button>
+            <button id="tabEqBtn" class="tab-btn active" onclick="switchTab('eq')">База</button>
             <button id="tabFracBtn" class="tab-btn" onclick="switchTab('frac')">Дроби</button>
+            <button id="tabProBtn" class="tab-btn" onclick="switchTab('pro')">ПРО</button>
+            <button id="tabTheoryBtn" class="tab-btn" onclick="switchTab('theory')">Справочник</button>
         </div>
 
         <div id="moduleEq" class="module active">
             <h2>Тренировка баланса</h2>
             <div id="eqDisplay" class="eq-display"></div>
-            <div class="eq-input-group">
-                x = <input type="text" id="answerEq" placeholder="?" autocomplete="off">
+            <div style="font-size: 22px; font-weight: bold; margin-bottom: 15px;">
+                x = <input type="text" id="answerEq" placeholder="?" style="width: 80px;" autocomplete="off">
             </div>
-            <button class="btn-check" onclick="checkEq()">Проверить</button>
+            <button onclick="checkEq()" style="width: 200px;">Проверить</button>
             <div id="feedbackEq" class="feedback"></div>
         </div>
 
         <div id="moduleFrac" class="module">
-            <h2>Операция «Общий знаменатель»</h2>
+            <h2>Поиск знаменателя</h2>
             <div class="frac-container">
-                <div class="fraction">
-                    <div class="num" id="f_n1">1</div>
-                    <div class="den" id="f_d1">2</div>
-                </div>
-                <div class="operator" id="f_op">+</div>
-                <div class="fraction">
-                    <div class="num" id="f_n2">1</div>
-                    <div class="den" id="f_d2">3</div>
-                </div>
-                <div class="operator">=</div>
+                <div class="fraction"><div class="num" id="f_n1">1</div><div class="den" id="f_d1">2</div></div>
+                <div id="f_op" style="padding: 0 5px;">+</div>
+                <div class="fraction"><div class="num" id="f_n2">1</div><div class="den" id="f_d2">3</div></div>
+                <div>=</div>
                 <div class="fraction input-fraction">
-                    <input type="text" id="ansFracNum" class="num-input" placeholder="?" autocomplete="off">
+                    <input type="text" id="ansFracNum" placeholder="?" autocomplete="off" style="border-bottom:none; border-radius: 6px 6px 0 0;">
                     <div class="divider"></div>
-                    <input type="text" id="ansFracDen" class="den-input" placeholder="?" autocomplete="off">
+                    <input type="text" id="ansFracDen" placeholder="?" autocomplete="off" style="border-top:none; border-radius: 0 0 6px 6px;">
                 </div>
             </div>
-            <button class="btn-check" onclick="checkFrac()">Ответить</button>
-            <p class="note">Если получается целое число, в знаменатель напиши 1</p>
+            <button onclick="checkFrac()" style="width: 200px;">Ответить</button>
+            <p style="font-size: 13px; color: #7f8c8d;">Если ответ целый, в знаменатель пиши 1</p>
             <div id="feedbackFrac" class="feedback"></div>
         </div>
+
+        <div id="modulePro" class="module">
+            <h2>Битва со структурой</h2>
+            <div id="target-eq" class="eq-row"></div>
+
+            <div id="step1" class="step-box">
+                <strong>ШАГ 1:</strong> На какое число умножить всё уравнение, чтобы убрать дроби? (Общий знаменатель)<br>
+                <input type="text" id="user-lcd" placeholder="ОЗ?" style="width: 80px; margin-top: 10px;" autocomplete="off">
+                <button onclick="checkLCD()">ОК</button>
+            </div>
+
+            <div id="step2" class="step-box" style="display:none;">
+                <strong>ШАГ 2:</strong> Запиши числители без дробей. <br>
+                <small style="color:#e67e22;">Домножь каждое число! (Пример: 2x+4-3x+12=6)</small>
+                <input type="text" id="user-struct" class="full-input" placeholder="Строка без дробей..." autocomplete="off">
+                <button onclick="checkStruct()">Проверить структуру</button>
+            </div>
+
+            <div id="step3" class="step-box" style="display:none;">
+                <strong>ШАГ 3:</strong> Финальный ответ: <br>
+                x = <input type="text" id="user-final" style="width: 80px;" autocomplete="off">
+                <button onclick="checkFinal()">Завершить</button>
+            </div>
+
+            <div id="hintPro" class="feedback"></div>
+        </div>
+
+        <div id="moduleTheory" class="module">
+            <h2>Метод Вагончиков</h2>
+            
+            <div class="theory-box">
+                <h4>🚂 Что такое Вагончик?</h4>
+                <p>Это слагаемое. Знак (+ или -) перед числом — это сцепка. Она <b>намертво принадлежит</b> числу справа от неё. Например, в <code>-5x + 3</code> вагончики — это <code>-5x</code> и <code>+3</code>.</p>
+            </div>
+
+            <div class="theory-box">
+                <h4>🛂 Правило Границы (=)</h4>
+                <p>При переносе вагончика через знак равно, он обязан сменить свой знак на противоположный (плюс на минус, минус на плюс).</p>
+            </div>
+
+            <div class="theory-box">
+                <h4>⛲ Закон Фонтанчика</h4>
+                <p>Множитель перед скобкой умножается на <b>каждое</b> число внутри. <code>2(x - 4) = 2x - 8</code></p>
+            </div>
+
+            <div class="theory-box">
+                <h4>🪞 Зеркало (Минус перед скобкой)</h4>
+                <p>Минус перед скобкой меняет <b>все</b> знаки внутри на противоположные при раскрытии. <code>-(x - 5) = -x + 5</code></p>
+            </div>
+
+            <div class="theory-box">
+                <h4>☂️ Дробная черта = Невидимые скобки</h4>
+                <p>Всё, что над дробной чертой, связано вместе. Нельзя переносить цифры из числителя, пока не избавишься от знаменателя!</p>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
+        // Глобальные переменные
         let globalXP = 0;
         let currentMode = 'eq';
         
-        // Переменные Уравнений
-        let eq_x, eq_a, eq_b, eq_c, eq_d;
-        let eq_streak = 0;
+        // Переменные для Базы
+        let eq_x, eq_a, eq_b, eq_c, eq_d, eq_streak = 0;
+        // Переменные для Дробей
+        let fr_n1, fr_d1, fr_n2, fr_d2, fr_isAdd, fr_streak = 0;
+        // Переменные для ПРО
+        let pro = {}, pro_streak = 0;
 
-        // Переменные Дробей
-        let fr_n1, fr_d1, fr_n2, fr_d2, fr_isAdd;
-        let fr_streak = 0;
-
-        // --- УПРАВЛЕНИЕ ВКЛАДКАМИ ---
+        // --- НАВИГАЦИЯ ---
         function switchTab(mode) {
             currentMode = mode;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.module').forEach(mod => mod.classList.remove('active'));
             
-            // Стили кнопок
-            document.getElementById('tabEqBtn').classList.toggle('active', mode === 'eq');
-            document.getElementById('tabFracBtn').classList.toggle('active', mode === 'frac');
-            
-            // Видимость модулей
-            document.getElementById('moduleEq').classList.toggle('active', mode === 'eq');
-            document.getElementById('moduleFrac').classList.toggle('active', mode === 'frac');
+            let btnId = mode.charAt(0).toUpperCase() + mode.slice(1);
+            document.getElementById('tab' + btnId + 'Btn').classList.add('active');
+            document.getElementById('module' + btnId).classList.add('active');
             
             updateStreakDisplay();
             
-            if(mode === 'eq') { document.getElementById('answerEq').focus(); } 
-            else { document.getElementById('ansFracNum').focus(); }
+            if(mode === 'eq') document.getElementById('answerEq').focus();
+            if(mode === 'frac') document.getElementById('ansFracNum').focus();
+            if(mode === 'pro' && !pro.lcd) initPro();
         }
 
         function updateStreakDisplay() {
-            let streak = currentMode === 'eq' ? eq_streak : fr_streak;
+            let streak = currentMode === 'eq' ? eq_streak : (currentMode === 'frac' ? fr_streak : pro_streak);
             let display = document.getElementById('streakDisplay');
-            if (streak > 0) {
+            if (streak > 0 && currentMode !== 'theory') {
                 display.style.display = "inline";
-                document.getElementById('streakVal').innerText = streak;
-                document.getElementById('multiplierVal').innerText = Math.min(streak, 5);
+                document.getElementById('streakVal').innerText = streak + " (x" + Math.min(streak, 5) + ")";
             } else {
                 display.style.display = "none";
             }
@@ -148,17 +202,19 @@
         }
 
         function addXP(basePoints, streak) {
-            let multiplier = Math.min(streak, 5);
-            let earned = basePoints * multiplier;
+            let earned = basePoints * Math.min(streak > 0 ? streak : 1, 5);
             globalXP += earned;
             updateStreakDisplay();
             return earned;
         }
 
-        // --- ЛОГИКА УРАВНЕНИЙ ---
         function getRand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-        function fmtTerm(coef, isFirst) { let sign = coef > 0 ? (isFirst ? "" : "+ ") : (isFirst ? "-" : "- "); let absCoef = Math.abs(coef); return sign + (absCoef === 1 ? "x" : absCoef + "x"); }
-        function fmtConst(val, isFirst) { if (val === 0 && !isFirst) return ""; if (val === 0 && isFirst) return "0"; return (val > 0 ? (isFirst ? "" : "+ ") : (isFirst ? "-" : "- ")) + Math.abs(val); }
+        function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+        function lcm(a, b) { return (a * b) / gcd(a, b); }
+
+        // --- ЛОГИКА БАЗЫ (УРАВНЕНИЯ) ---
+        function fmtTerm(c, isFirst) { let s = c > 0 ? (isFirst ? "" : "+ ") : (isFirst ? "-" : "- "); let a = Math.abs(c); return s + (a === 1 ? "x" : a + "x"); }
+        function fmtConst(v, isFirst) { if (v===0 && !isFirst) return ""; if (v===0 && isFirst) return "0"; return (v > 0 ? (isFirst ? "" : "+ ") : (isFirst ? "-" : "- ")) + Math.abs(v); }
 
         function generateEq() {
             do { eq_a = getRand(-6, 6); eq_c = getRand(-6, 6); } while (eq_a === eq_c || eq_a === 0 || eq_c === 0);
@@ -168,90 +224,140 @@
             document.getElementById('eqDisplay').innerText = fmtTerm(eq_a, true) + (eq_b !== 0 ? " " + fmtConst(eq_b, false) : "") + " = " + fmtTerm(eq_c, true) + (eq_d !== 0 ? " " + fmtConst(eq_d, false) : "");
             document.getElementById('answerEq').value = "";
             document.getElementById('feedbackEq').style.display = "none";
-            if(currentMode === 'eq') document.getElementById('answerEq').focus();
         }
 
         function checkEq() {
             let input = document.getElementById('answerEq').value;
-            let feedback = document.getElementById('feedbackEq');
-            if (input === "") return;
+            let fb = document.getElementById('feedbackEq');
+            if (!input) return;
 
-            feedback.style.display = "block";
-            if (parseInt(input) === eq_x) {
-                eq_streak++;
-                let earned = addXP(15, eq_streak);
-                feedback.innerHTML = `<div class='correct'>Точно! +${earned} XP 🚀</div>`;
+            fb.style.display = "block";
+            if (parseInt(input.replace(/\s+/g, '')) === eq_x) {
+                eq_streak++; let earned = addXP(15, eq_streak);
+                fb.innerHTML = `<div class='correct'>Точно! +${earned} XP 🚀</div>`;
                 setTimeout(generateEq, 1500);
             } else {
                 eq_streak = 0; updateStreakDisplay();
-                feedback.innerHTML = `
-                    <div class='incorrect'>Ошибка! Серия прервана 😢</div>
+                fb.innerHTML = `<div class='incorrect'>Ошибка! Серия прервана 😢</div>
                     <div class='step'>1. Иксы влево, числа вправо:</div>
-                    <div class='step'>&nbsp;&nbsp;&nbsp;${fmtTerm(eq_a, true)} ${fmtTerm(-eq_c, false)} = ${fmtConst(eq_d, true)} ${fmtConst(-eq_b, false)}</div>
-                    <div class='step'>2. Приводим подобные:</div>
-                    <div class='step'>&nbsp;&nbsp;&nbsp;${eq_a - eq_c}x = ${eq_d - eq_b}</div>
-                    <div class='step' style='color:#e74c3c; margin-top:10px;'><strong>Правильный ответ: x = ${eq_x}</strong></div>
-                    <button class="btn-check btn-retry" onclick="generateEq()">Попробовать снова</button>
-                `;
+                    <div class='step'>&nbsp;&nbsp;${fmtTerm(eq_a, true)} ${fmtTerm(-eq_c, false)} = ${fmtConst(eq_d, true)} ${fmtConst(-eq_b, false)}</div>
+                    <div class='step'>2. Считаем: ${eq_a - eq_c}x = ${eq_d - eq_b}</div>
+                    <div class='step' style='color:#e74c3c;'><strong>Ответ: x = ${eq_x}</strong></div>
+                    <button class="btn-retry" onclick="generateEq()">Дальше</button>`;
             }
         }
 
         // --- ЛОГИКА ДРОБЕЙ ---
-        function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
-        function lcm(a, b) { return (a * b) / gcd(a, b); }
-
         function generateFrac() {
             fr_d1 = getRand(2, 9); do { fr_d2 = getRand(2, 9); } while (fr_d1 === fr_d2);
             fr_n1 = getRand(1, fr_d1 - 1); fr_n2 = getRand(1, fr_d2 - 1);
             fr_isAdd = Math.random() > 0.5;
-            
-            if (!fr_isAdd && (fr_n1/fr_d1 < fr_n2/fr_d2)) {
-                let tn = fr_n1, td = fr_d1; fr_n1 = fr_n2; fr_d1 = fr_d2; fr_n2 = tn; fr_d2 = td;
-            }
+            if (!fr_isAdd && (fr_n1/fr_d1 < fr_n2/fr_d2)) { let tn=fr_n1, td=fr_d1; fr_n1=fr_n2; fr_d1=fr_d2; fr_n2=tn; fr_d2=td; }
 
             document.getElementById('f_n1').innerText = fr_n1; document.getElementById('f_d1').innerText = fr_d1;
             document.getElementById('f_n2').innerText = fr_n2; document.getElementById('f_d2').innerText = fr_d2;
             document.getElementById('f_op').innerText = fr_isAdd ? "+" : "-";
-            
             document.getElementById('ansFracNum').value = ""; document.getElementById('ansFracDen').value = "";
             document.getElementById('feedbackFrac').style.display = "none";
-            if(currentMode === 'frac') document.getElementById('ansFracNum').focus();
         }
 
         function checkFrac() {
             let un = parseInt(document.getElementById('ansFracNum').value);
             let ud = parseInt(document.getElementById('ansFracDen').value);
-            let feedback = document.getElementById('feedbackFrac');
+            let fb = document.getElementById('feedbackFrac');
             if (isNaN(un) || isNaN(ud) || ud === 0) return;
 
-            let cDen = lcm(fr_d1, fr_d2);
-            let m1 = cDen / fr_d1, m2 = cDen / fr_d2;
-            let cNum = fr_isAdd ? (fr_n1 * m1 + fr_n2 * m2) : (fr_n1 * m1 - fr_n2 * m2);
-            
-            let div = gcd(cNum, cDen);
-            let sNum = cNum / div, sDen = cDen / div;
+            let cDen = lcm(fr_d1, fr_d2); let m1 = cDen/fr_d1, m2 = cDen/fr_d2;
+            let cNum = fr_isAdd ? (fr_n1*m1 + fr_n2*m2) : (fr_n1*m1 - fr_n2*m2);
+            let div = gcd(Math.abs(cNum), cDen); let sNum = cNum/div, sDen = cDen/div;
 
-            feedback.style.display = "block";
+            fb.style.display = "block";
             if (un * cDen === cNum * ud) {
-                fr_streak++;
-                let earned = addXP(20, fr_streak);
-                let extra = (un !== sNum) ? `<br><span style='font-size:14px;color:#7f8c8d;'>Можно было сократить до ${sNum}/${sDen} 😉</span>` : "";
-                feedback.innerHTML = `<div class='correct'>Идеально! +${earned} XP 🍕</div>${extra}`;
-                setTimeout(generateFrac, 2000);
+                fr_streak++; let earned = addXP(20, fr_streak);
+                let extra = (un !== sNum) ? `<br><span style='font-size:14px;color:#7f8c8d;'>Сокращенно: ${sNum}/${sDen} 😉</span>` : "";
+                fb.innerHTML = `<div class='correct'>Идеально! +${earned} XP 🍕</div>${extra}`;
+                setTimeout(generateFrac, 1800);
             } else {
                 fr_streak = 0; updateStreakDisplay();
-                let op = fr_isAdd ? "+" : "-";
-                feedback.innerHTML = `
-                    <div class='incorrect'>Упс! Баланс нарушен 🍕</div>
-                    <div class='step'>1. Ищем общий знаменатель для ${fr_d1} и ${fr_d2}. Это <b>${cDen}</b>.</div>
-                    <div class='step'>2. Домножаем первую: (${fr_n1}×${m1})/${cDen} = ${fr_n1*m1}/${cDen}</div>
-                    <div class='step'>3. Домножаем вторую: (${fr_n2}×${m2})/${cDen} = ${fr_n2*m2}/${cDen}</div>
-                    <div class='step'>4. Считаем числители: ${fr_n1*m1} ${op} ${fr_n2*m2} = <b>${cNum}</b></div>
-                    <div class='step' style='color:#e74c3c; margin-top:10px;'>
-                        <strong>Ответ: ${cNum}/${cDen}</strong> ${div > 1 ? `(или <b>${sNum}/${sDen}</b>)` : ''}
-                    </div>
-                    <button class="btn-check btn-retry" onclick="generateFrac()">Попробовать снова</button>
-                `;
+                fb.innerHTML = `<div class='incorrect'>Баланс нарушен 🍕</div>
+                    <div class='step'>Общий знаменатель: <b>${cDen}</b></div>
+                    <div class='step'>Числители: ${fr_n1*m1} ${fr_isAdd?"+":"-"} ${fr_n2*m2} = ${cNum}</div>
+                    <div class='step' style='color:#e74c3c;'><strong>Ответ: ${cNum}/${cDen}</strong></div>
+                    <button class="btn-retry" onclick="generateFrac()">Дальше</button>`;
+            }
+        }
+
+        // --- ЛОГИКА ПРО (СЛОЖНЫЕ ДРОБИ) ---
+        function initPro() {
+            const b = [2, 3, 4, 6][Math.floor(Math.random()*4)];
+            const d = b === 2 ? 3 : (b === 3 ? 2 : 5);
+            const lcd = lcm(b, d);
+            const x = getRand(-8, 8); const a = getRand(1, 5); const c = getRand(1, 5);
+            
+            const e_val = (x + a)/b - (x - c)/d;
+            pro = { x, a, b, c, d, lcd, e: Math.round(e_val * 100) / 100, valE: Math.round(e_val * lcd) };
+
+            document.getElementById('target-eq').innerHTML = `
+                <div class="frac"><div class="num">x + ${pro.a}</div><div class="den">${pro.b}</div></div>
+                <div>-</div>
+                <div class="frac"><div class="num">x - ${pro.c}</div><div class="den">${pro.d}</div></div>
+                <div>=</div><div>${pro.e}</div>`;
+            
+            document.getElementById('step1').style.display = 'block';
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step3').style.display = 'none';
+            document.getElementById('hintPro').style.display = 'none';
+            document.getElementById('user-lcd').value = '';
+            document.getElementById('user-struct').value = '';
+            document.getElementById('user-final').value = '';
+        }
+
+        function hintP(txt, type) {
+            let h = document.getElementById('hintPro'); h.innerHTML = txt;
+            h.className = 'feedback ' + type; h.style.display = 'block';
+        }
+
+        function checkLCD() {
+            let val = parseInt(document.getElementById('user-lcd').value);
+            if(val === pro.lcd) {
+                hintP("Верно! ОЗ = " + val + ". Теперь домножь на него каждый числитель.", "ok");
+                document.getElementById('step2').style.display = 'block';
+                document.getElementById('user-struct').focus();
+            } else hintP("Нет. Найди число, которое делится на " + pro.b + " и на " + pro.d, "err");
+        }
+
+        function checkStruct() {
+            let str = document.getElementById('user-struct').value.replace(/\s+/g, '').toLowerCase();
+            let m1 = pro.lcd / pro.b; let m2 = pro.lcd / pro.d;
+            
+            let p1 = `${m1}x+${m1*pro.a}`; 
+            let p2 = `-${m2}x+${m2*pro.c}`; // Минус меняет знак!
+            let exp1 = p1 + p2 + "=" + pro.valE;
+            let exp2 = m1+"x+"+(m1*pro.a)+"-"+m2+"x+"+(m2*pro.c)+"="+pro.valE;
+
+            if(str === exp1 || str === exp2) {
+                hintP("Блестяще! Знаки на месте.", "ok");
+                document.getElementById('step3').style.display = 'block';
+                document.getElementById('user-final').focus();
+            } else {
+                pro_streak = 0; updateStreakDisplay();
+                hintP(`<b>Ошибка структуры!</b><br>
+                    1. Множитель первой дроби: ${m1} -> <i>${m1}x + ${m1*pro.a}</i><br>
+                    2. Множитель второй: ${m2}. <b>УЧТИ МИНУС</b> перед дробью: <i>-${m2}x + ${m2*pro.c}</i><br>
+                    Должно быть: <b>${exp1}</b>`, "err");
+            }
+        }
+
+        function checkFinal() {
+            let val = parseInt(document.getElementById('user-final').value);
+            if(val === pro.x) {
+                pro_streak++; let earned = addXP(40, pro_streak);
+                hintP("Уравнение уничтожено! +" + earned + " XP 🏆", "ok");
+                setTimeout(initPro, 2500);
+            } else {
+                pro_streak = 0; updateStreakDisplay();
+                hintP("Ошибка в финале. Перенеси иксы и числа внимательно. Ответ: " + pro.x, "err");
+                setTimeout(initPro, 4000);
             }
         }
 
@@ -259,8 +365,10 @@
         document.getElementById('answerEq').addEventListener('keypress', e => { if (e.key === 'Enter') checkEq(); });
         document.getElementById('ansFracNum').addEventListener('keypress', e => { if (e.key === 'Enter') document.getElementById('ansFracDen').focus(); });
         document.getElementById('ansFracDen').addEventListener('keypress', e => { if (e.key === 'Enter') checkFrac(); });
+        document.getElementById('user-lcd').addEventListener('keypress', e => { if (e.key === 'Enter') checkLCD(); });
+        document.getElementById('user-struct').addEventListener('keypress', e => { if (e.key === 'Enter') checkStruct(); });
+        document.getElementById('user-final').addEventListener('keypress', e => { if (e.key === 'Enter') checkFinal(); });
 
-        // Инициализация
         window.onload = () => { generateEq(); generateFrac(); switchTab('eq'); };
     </script>
 </body>
